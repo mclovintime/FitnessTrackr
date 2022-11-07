@@ -4,14 +4,15 @@ const client = require("./client")
 
 async function dropTables() {
   try{
-    await client.query(`DROP TABLE IF EXISTS users;`);
+    await client.query(`DROP TABLE IF EXISTS routine_activities;`);
+    await client.query(`DROP TABLE IF EXISTS routines;`);
     await client.query(`DROP TABLE IF EXISTS activities;`);
-    await client.query(`DROP TABLE IF EXISTS routine;`);
-    await client.query(`DROP TABLE IF EXISTS routineActivities;`);
+    await client.query(`DROP TABLE IF EXISTS users;`);
     console.log("Dropping All Tables...")
   }catch(error){
     throw error;
   // drop all tables, in the correct order
+}
 }
 
 async function createTables() {
@@ -31,6 +32,7 @@ async function createTables() {
       description TEXT NOT NULL
     );
     `)
+
     await client.query(`
     CREATE TABLE routines(
       id SERIAL PRIMARY KEY,
@@ -40,15 +42,19 @@ async function createTables() {
       goal TEXT NOT NULL
     );
     `)
+    console.log("testing in createTables")
     await client.query(`
-    CREATE TABLE routineActivities(
+    CREATE TABLE routine_activities(
       id SERIAL PRIMARY KEY,
       "routineId" INTEGER REFERENCES routines(id),
-      "activityId" REFERENCES activities(id),
+      "activityId" INTEGER REFERENCES activities(id),
       duration INTEGER,
-      count INTEGER
+      count INTEGER,
+      UNIQUE ("routineId", "activityId")
     );
     `)
+
+    console.log("testing in createTables")
 
   }catch(error){
     throw error

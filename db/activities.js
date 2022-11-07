@@ -20,6 +20,18 @@ async function attachActivitiesToRoutines(routines) {
 // return the new activity
 async function createActivity({ name, description }) {
 
+  fetch('http://fitnesstrac-kr.herokuapp.com/api/activities', {
+  method: "POST",
+  body: JSON.stringify({
+    name: `${name}`,
+    description: `${description}`
+  })
+}).then(response => response.json())
+  .then(result => {
+    console.log(result);
+  })
+  .catch(console.error);
+
 }
 
 // don't try to update the id
