@@ -20,19 +20,25 @@ async function attachActivitiesToRoutines(routines) {
 // return the new activity
 async function createActivity({ name, description }) {
 
-  fetch('http://fitnesstrac-kr.herokuapp.com/api/activities', {
-  method: "POST",
-  body: JSON.stringify({
-    name: `${name}`,
-    description: `${description}`
-  })
-}).then(response => response.json())
-  .then(result => {
-    console.log(result);
-  })
-  .catch(console.error);
-
+try{
+  const{
+    rows: [activity],
+  } = await client.query(
+    `
+    INSERT INTO activities (name, description)
+    VALUES ($1, $2)
+    ON CONFLICT (name) DO NOTHING
+    RETURNING *;
+    `, [name, description]
+  );
+  return activity;
+} catch (error) {
+  throw error;
 }
+  }
+
+
+
 
 // don't try to update the id
 // do update the name and description

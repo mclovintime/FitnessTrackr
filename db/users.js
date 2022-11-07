@@ -13,8 +13,7 @@ async function createUser({ username, password }) {
       VALUES ($1, $2)
       ON CONFLICT (username) DO NOTHING
       RETURNING *;
-      `,
-      [username, password]
+      `, [username, password]
     );
     return user;
   }catch (error){
