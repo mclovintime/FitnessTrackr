@@ -5,7 +5,8 @@ createUser
 } = require('./users')
 
 const {createActivity} = require('./activities')
-const {createRoutine} = require('./routines')
+const {createRoutine, getRoutinesWithoutActivities} = require('./routines')
+
   
  
 
