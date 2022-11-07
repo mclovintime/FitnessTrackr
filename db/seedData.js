@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-catch */
 // require in the database adapter functions as you write them (createUser, createActivity...)
 const {
 createUser

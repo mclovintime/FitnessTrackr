@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-catch */
 const client = require('./client');
 
 async function getRoutineById(id){
@@ -28,7 +29,7 @@ async function createRoutine({creatorId, isPublic, name, goal}) {
       rows: [routine],
     } = await client.query(
       `
-      INSERT INTO routines (creatorId, isPublic, name, goal)
+      INSERT INTO routines ("creatorId", "isPublic", name, goal)
       VALUES ($1, $2, $3, $4)
       ON CONFLICT (name) DO NOTHING
       RETURNING *;
