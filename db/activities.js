@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-catch */
 const { addListener } = require("nodemon");
 const client = require("./client")
 
@@ -110,7 +111,6 @@ try{
 // do update the name and description
 // return the updated activity
 async function updateActivity({ id, ...fields }) {
-console.log(fields, "this is the fields homie")
 if (fields.name)  {
   try {
     const {

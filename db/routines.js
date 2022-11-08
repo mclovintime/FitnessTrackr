@@ -2,25 +2,36 @@
 const client = require('./client');
 
 async function getRoutineById(){
+  try {
+    const{
+    rows: [routine]
+    } = await client.query(`
+    SELECT routine
+    FROM routines
+    WHERE id = $1`);
+    return routine;
+  }catch(error){
+    throw error;
+  }
 }
 
 async function getRoutinesWithoutActivities(){
   try {
     const { rows: routines } = await client.query(`
       SELECT *
-      FROM routines;
+      FROM activities;
     `);
-
-  
-// console.log(routines)
     return routines;
-  } catch (error) {
+  }catch (error){
     throw error;
   }
 }
+  
+
 
 
 async function getAllRoutines() {
+   
 }
 
 async function getAllRoutinesByUser({username}) {
