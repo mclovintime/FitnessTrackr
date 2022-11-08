@@ -18,6 +18,7 @@ async function createUser({ username, password }) {
       `, [username, password]
     );
     // console.log(user.username, "this is the user test")
+    delete user.password;
     return user;
   }catch (error){
     throw error;
@@ -33,10 +34,15 @@ async function getUser({ username, password }) {
     SELECT id, username, password FROM users
     WHERE username=$1;
     `, [username]);
-    console.log(user, "This is get user test")
+  
+
+
     if (user.password===password){
-      return user.username;
+      delete user.password
+      console.log(user, "This is get user test")
+      return user;
     }
+
     }catch (error){
     throw error;
   }
