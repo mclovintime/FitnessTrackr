@@ -10,16 +10,19 @@ async function addActivityToRoutine({
   count,
   duration,
 }) {
+  
     try {
-      await client.query(
+      const{
+        rows: [routineActivity]
+      } = await client.query(
         `
-        INSERT INTO routine_activities (routine_id, activity_id, count, duration)
+        INSERT INTO routine_activities ("routineId", "activityId", "count", "duration")
         VALUES ($1, $2, $3, $4)
-        ON CONFLICT (routine_id, activity_id) DO NOTHING
+        ON CONFLICT ("routineId", "activityId") DO NOTHING
         RETURNING *;
-        `,
-        [routineId, activityId, count, duration]
+        `,  [routineId, activityId, count, duration]
       );
+      return routineActivity;
     } catch (error) {
       throw error
     }

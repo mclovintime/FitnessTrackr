@@ -53,7 +53,7 @@ async function createTables() {
       goal TEXT NOT NULL
     );
     `)
-    console.log("testing in createTables")
+    
     await client.query(`
     CREATE TABLE routine_activities(
       id SERIAL PRIMARY KEY,
@@ -65,7 +65,7 @@ async function createTables() {
     );
     `)
 
-    console.log("testing in createTables")
+    
 
   }catch(error){
     throw error
@@ -165,7 +165,7 @@ async function createInitialRoutines() {
     routinesToCreate.map((routine) => createRoutine(routine))
   )
   // console.log("Routines Created: ", routines)
-  // console.log("Finished creating routines.")
+  console.log("Finished creating routines.")
 }
 
 async function createInitialRoutineActivities() {
@@ -176,7 +176,6 @@ async function createInitialRoutineActivities() {
   const [bicep1, bicep2, chest1, chest2, leg1, leg2, leg3] =
     await getAllActivities()
 
-    console.log("testing")
 
   const routineActivitiesToCreate = [
     {
@@ -237,7 +236,7 @@ async function createInitialRoutineActivities() {
   const routineActivities = await Promise.all(
     routineActivitiesToCreate.map(addActivityToRoutine)
   )
-  console.log("routine_activities created: ", routineActivities)
+  // console.log("routine_activities created: ", routineActivities)
   console.log("Finished creating routine_activities!")
 }
 
