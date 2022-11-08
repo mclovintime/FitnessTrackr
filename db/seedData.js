@@ -6,7 +6,7 @@ createUser
 
 const {createActivity, getAllActivities} = require('./activities')
 const {createRoutine, getRoutinesWithoutActivities} = require('./routines')
-
+const {addActivityToRoutine}= require('./routine_activities')
   
  
 
