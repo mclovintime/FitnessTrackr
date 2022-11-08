@@ -30,15 +30,17 @@ async function getUser({ username, password }) {
     const {
         rows: [user],
     } = await client.query(`
-SELECT id, username FROM users
-    WHERE id=${userId};
-`);
-
-return user;
-} catch (error) {
-throw error;
-}
-}
+    SELECT id, username, password FROM users
+    WHERE username=$1;
+    `, [username]);
+    console.log(user, "This is get user test")
+    if (user.password===password){
+      return user.username;
+    }
+    }catch (error){
+    throw error;
+  }
+  }
 
 async function getUserById(userId) {
 try {
