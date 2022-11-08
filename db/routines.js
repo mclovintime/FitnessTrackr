@@ -1,7 +1,7 @@
 /* eslint-disable no-useless-catch */
 const client = require('./client');
 
-async function getRoutineById(id){
+async function getRoutineById(){
 }
 
 async function getRoutinesWithoutActivities(){
@@ -12,7 +12,7 @@ async function getRoutinesWithoutActivities(){
     `);
 
   
-console.log(routines)
+// console.log(routines)
     return routines;
   } catch (error) {
     throw error;
