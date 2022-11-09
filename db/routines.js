@@ -101,6 +101,9 @@ async function getPublicRoutinesByActivity({id}) {
 
 }
 
+// it seems that createRoutine's test is not passing, but the rest of the tests which
+// rely on it seem to be working fine
+
 async function createRoutine({creatorId, isPublic, name, goal}) {
 
   try{
@@ -114,6 +117,7 @@ async function createRoutine({creatorId, isPublic, name, goal}) {
       RETURNING *;
       `, [creatorId, isPublic, name, goal]
     );
+    
     return routine;
   }catch(error){
     throw(error);
@@ -123,9 +127,126 @@ async function createRoutine({creatorId, isPublic, name, goal}) {
 
 
 async function updateRoutine({id, ...fields}) {
+
+
+  let updatedRoutineReturn = {}
+
+  if (fields.name)  {
+    try {
+      const {
+          rows: [updatedRoutine],
+      } = await client.query(`
+  UPDATE routines 
+  SET name=$1
+  WHERE id=$2
+  RETURNING *
+  `, [fields.name, id]);
+  // console.log(fields.name, updatedActivity, "THIS IS UPDATED ACTIVITY")
+  updatedRoutineReturn = updatedRoutine
+ 
+  } catch (error) {
+  throw error;
+  }
+    }
+  
+    if (fields.goal)  {
+      try {
+        const {
+            rows: [updatedRoutine],
+        } = await client.query(`
+    UPDATE routines 
+    SET goal=$1
+    WHERE id=$2
+    RETURNING *
+    `, [fields.goal, id]);
+    
+    updatedRoutineReturn = updatedRoutine
+    
+    } catch (error) {
+    throw error;
+    }
+      }
+
+      if (fields.isPublic == true || fields.isPublic == false)  {
+      
+      console.log("should not be empty", fields.isPublic)
+        try {
+          const {
+              rows: [updatedRoutine],
+          } = await client.query(`
+      UPDATE routines 
+      SET "isPublic"=$1
+      WHERE id=$2
+      RETURNING *
+      `, [fields.isPublic, id]);
+      // console.log(fields.description, updatedActivity, "THIS IS UPDATED ACTIVITY")
+      updatedRoutineReturn = updatedRoutine
+      
+      
+      } catch (error) {
+      throw error;
+      }
+        }
+        
+        return updatedRoutineReturn
 }
 
 async function destroyRoutine(id) {
+  placeholderBigScope = ""
+
+  //get the name from routines
+  try{
+    const{
+      rows: [placeholder],
+    } = await client.query(
+      `
+      SELECT name FROM routines
+      WHERE id=${id}
+      ;
+      `,
+    );
+    placeholderBigScope = placeholder
+   
+   
+  } catch (error) {
+    throw error;
+  }
+ 
+
+  // try{
+  //   console.log(placeholderBigScope, "PLACEHOLDER ENTERS SECOND QUERY")
+  //   const{
+  //     rows: [bingbong],
+  //   } = await client.query(`
+  //     DELETE FROM routine_activities
+  //     WHERE "routineId"=${placeholderBigScope}
+  //     ;
+  //     `,
+  //   );
+  //   console.log(placeholder, "this is the destroy routine test")
+   
+  // } catch (error) {
+  //   throw error;
+  // }
+  
+
+  try{
+    const{
+      rows: [routine],
+    } = await client.query(
+      `
+      DELETE FROM routines
+      WHERE "id"=${id}
+     
+      RETURNING *;
+      `,
+    );
+    console.log(routine, "this is the destroy routine test")
+    return routine;
+  } catch (error) {
+    throw error;
+  }
+
 }
 
 module.exports = {
