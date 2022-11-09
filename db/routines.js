@@ -26,12 +26,18 @@ async function getRoutinesWithoutActivities(){
     throw error;
   }
 }
-  
-
-
 
 async function getAllRoutines() {
-   
+   try {
+    const {rows: routine } = await client.query(`
+    SELECT * 
+    FROM routines;`);
+    return routine;
+    // console.log("this is routines", routine)
+
+   } catch (error) {
+    throw error;
+   }
 }
 
 async function getAllRoutinesByUser({username}) {
@@ -63,7 +69,7 @@ async function createRoutine({creatorId, isPublic, name, goal}) {
   }catch(error){
     throw(error);
   }
-  }
+}
   
 
 
