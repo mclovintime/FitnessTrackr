@@ -1,6 +1,7 @@
 const express = require('express');
 const { getUserByUsername, createUser } = require('../db');
 const router = express.Router();
+const jwt = require("jsonwebtoken");
 
 // POST /api/users/login
 
