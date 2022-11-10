@@ -94,6 +94,7 @@ async function getPublicRoutinesByActivity({id}) {
     JOIN users ON routines."creatorId"=users.id
     WHERE "isPublic"=true;`)
     const routinesWithActivities= await attachActivitiesToRoutines(rows)
+    console.log(routinesWithActivities, "routines with activities test")
     return routinesWithActivities;
   }catch (error){
     throw error;
@@ -169,7 +170,6 @@ async function updateRoutine({id, ...fields}) {
 
       if (fields.isPublic == true || fields.isPublic == false)  {
       
-      console.log("should not be empty", fields.isPublic)
         try {
           const {
               rows: [updatedRoutine],
@@ -181,8 +181,6 @@ async function updateRoutine({id, ...fields}) {
       `, [fields.isPublic, id]);
       // console.log(fields.description, updatedActivity, "THIS IS UPDATED ACTIVITY")
       updatedRoutineReturn = updatedRoutine
-      
-      
       } catch (error) {
       throw error;
       }
@@ -192,60 +190,36 @@ async function updateRoutine({id, ...fields}) {
 }
 
 async function destroyRoutine(id) {
-  placeholderBigScope = ""
-
-  //get the name from routines
+  let placeholderBigScope = ""
   try{
     const{
-      rows: [placeholder],
-    } = await client.query(
-      `
-      SELECT name FROM routines
-      WHERE id=${id}
+      rows: [bingbong],
+    } = await client.query(`
+      DELETE FROM routine_activities
+      WHERE "routineId"=${id}
       ;
       `,
-    );
-    placeholderBigScope = placeholder
-   
-   
-  } catch (error) {
-    throw error;
-  }
- 
-
-  // try{
-  //   console.log(placeholderBigScope, "PLACEHOLDER ENTERS SECOND QUERY")
-  //   const{
-  //     rows: [bingbong],
-  //   } = await client.query(`
-  //     DELETE FROM routine_activities
-  //     WHERE "routineId"=${placeholderBigScope}
-  //     ;
-  //     `,
-  //   );
-  //   console.log(placeholder, "this is the destroy routine test")
-   
-  // } catch (error) {
-  //   throw error;
-  // }
+      );
+    
+      
+    } catch (error) {
+      throw error;
+    }
+    try{
+      const{
+        rows: [placeholder],
+      } = await client.query(
+        `
+        DELETE FROM routines 
+        WHERE id=${id}
+        ;
+        `,
+      );
+    } catch (error) {
+      throw error;
+    }
   
 
-  try{
-    const{
-      rows: [routine],
-    } = await client.query(
-      `
-      DELETE FROM routines
-      WHERE "id"=${id}
-     
-      RETURNING *;
-      `,
-    );
-    console.log(routine, "this is the destroy routine test")
-    return routine;
-  } catch (error) {
-    throw error;
-  }
 
 }
 
