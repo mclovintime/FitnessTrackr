@@ -190,7 +190,7 @@ async function updateRoutine({id, ...fields}) {
 }
 
 async function destroyRoutine(id) {
-  let placeholderBigScope = ""
+
   try{
     const{
       rows: [bingbong],
