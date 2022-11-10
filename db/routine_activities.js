@@ -2,7 +2,20 @@
 const client = require('./client')
 
 async function getRoutineActivityById(id){
+
+  try{
+    const{
+      rows: [routineactivity]
+    } = await client.query(`
+    SELECT * FROM routine_activities
+    WHERE id=${id};`)
+  
+  return routineactivity;
+}catch(error) {
+  throw error;
 }
+}
+
 
 async function addActivityToRoutine({
   routineId,
@@ -29,6 +42,19 @@ async function addActivityToRoutine({
   }
 
 async function getRoutineActivitiesByRoutine({id}) {
+  try{
+    const{
+      rows: [routineactivity]
+    } = await client.query(`
+    SELECT * FROM routine_activities
+    WHERE "routineId"=$1
+    ;
+    `, [id]);
+  console.log(routineactivity, "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+  return routineactivity;
+}catch(error) {
+  throw error;
+}
 }
 
 async function updateRoutineActivity ({id, ...fields}) {
