@@ -25,7 +25,7 @@ async function createUser({ username, password }) {
   }
   }
 
-// still workin on this one
+
 async function getUser({ username, password }) {
   try {
     const {
@@ -39,7 +39,7 @@ async function getUser({ username, password }) {
 
     if (user.password===password){
       delete user.password
-      console.log(user, "This is get user test")
+      // console.log(user, "This is get user test")
       return user;
     }
 
@@ -63,9 +63,31 @@ return user;
 }
 }
 
-async function getUserByUsername(userName) {
 
-}
+  async function getUserByUsername(userName) {
+    try {
+      const {
+        rows: [user],
+      } = await client.query(
+        `
+      SELECT * FROM users
+      WHERE username = $1;`
+      ,
+        [userName]
+      );
+      return user;
+    } catch (error) {
+      throw error;
+    }
+  }
+  
+  module.exports = {
+    createUser,
+    getUser,
+    getUserById,
+    getUserByUsername,
+  };
+
 
 module.exports = {
   createUser,

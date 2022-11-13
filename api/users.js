@@ -1,81 +1,129 @@
-/* eslint-disable no-useless-catch */
-const express = require('express');
-const { getUserByUsername, createUser } = require('../db');
-const router = express.Router();
+const express = require("express");
+const usersRouter = express.Router();
 const jwt = require("jsonwebtoken");
-router.use((req, res, next)=>{
-    console.log("A request has been made to /users");
-    next();
-})
+const { getPublicRoutinesByUser, getAllRoutinesByUser } = require("../db/routines.js");
+const { createUser, getUserByUsername, } = require("../db/users.js");
+const { JWT_SECRET } = process.env;
+// const { token } = require("morgan");
+const { requireUser } = require("./utils");
+
 // POST /api/users/login
 
+usersRouter.post("/login", async (req, res, next) => {
+  const { username, password } = req.body;
+
+  // request must have both
+  if (!username || !password) {
+    next({
+      name: "MissingCredentialsError",
+      message: "Please supply both a username and password",
+    });
+  }
+
+  try {
+    const user = await getUserByUsername(username);
+
+    if (user && user.password == password) {
+      const token = jwt.sign(
+        { id: user.id, username: user.username },
+        JWT_SECRET
+      );
+      const userData = jwt.verify(token, JWT_SECRET);
+      res.send({ user, message: "you're logged in!", token });
+      return userData;
+    } else {
+      next({
+        name: "IncorrectCredentialsError",
+        message: "Username or password is incorrect",
+      });
+    }
+    return user;
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+});
 
 // POST /api/users/register
+usersRouter.post("/register", async (req, res, next) => {
+  const { username, password } = req.body;
 
+  try {
+    const _user = await getUserByUsername(username);
 
-router.post('/register', async (req, res, next) => {
-    const{username, password}= req.body;
-
-    try{
-        const userObj = await getUserByUsername(username)
-        if (userObj){
-            next({
-                name:'UserExistsError',
-                message:'A user by that username already exists'
-            })
-        }
-        const newUser = await createUser({
-            username: username, 
-            password: password, 
-        })
-        const token = jwt.sign(
-            newUser, 
-            process.env.JWT_SECRET, 
-        )
-        res.send({
-            message: "thank you for signing up",
-            token: token,
-            user: {id:newUser.id,
-                 username: newUser.username},
-         
-        })
-    }catch ({name, message}) {
-        next({name, message})
+    if (password.length < 8) {
+      next({
+        name: "PasswordLengthError",
+        message: "Password Too Short!",
+        error: "error",
+      });
     }
 
-})
+    if (_user) {
+      next({
+        name: "duplicateUser",
+        message: `User ${username} is already taken.`,
+        error: "error",
+      });
+    } else {
+      const user = await createUser({
+        username,
+        password,
+      });
 
-//     if (password.length < 8){
-//     next({
-//         name: "Password error",
-//         message: "Password must be 8 characters or longer"
-//     });
-// }
+      const token = jwt.sign(
+        {
+          id: user.id,
+          username,
+        },
+        JWT_SECRET,
+        {
+          expiresIn: "1w",
+        }
+      );
 
-// if (user)   {
-//     next({
-//         name: "UserExistsError",
-//         message: "This user already exists",
-//     });
-// }
-
-// const newUser = await createUser({
-//     username,
-//     password
-// });
-// console.log(newUser, "this is new user")
-
-// res.send({newUser})
-
-// return newUser;
-
-//     } catch (error){
-// throw error
-//     }
-
+      res.send({
+        message: "Thanks for signing up",
+        token,
+        user,
+      });
+    }
+  } catch ({ name, message, error }) {
+    next({ name, message, error });
+  }
+});
 
 // GET /api/users/me
 
-// GET /api/users/:username/routines
+usersRouter.get("/me", requireUser, async (req, res, next) => {
+  try {
+    if (req.user) {
+      res.send(req.user);
+    } else {
+      next({
+        name: "MissingUserError",
+        message: "You must be logged in to perform this action",
+        error: "MissingUserError",
+      });
+    }
+  } catch ({ name, message, error }) {
+    next({ name, message, error });
+  }
+});
 
-module.exports = router;
+// GET /api/users/:username/routines
+usersRouter.get("/:username/routines", async(req, res, next) => {
+  try {
+    const username = req.params;
+    const routines = await getPublicRoutinesByUser(username);
+    res.send(routines)
+  } catch ({ name, message, error }) {
+    next({ name, message, error });
+  }
+}) 
+
+
+
+
+module.exports = usersRouter;
+
