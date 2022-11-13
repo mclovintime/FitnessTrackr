@@ -4,6 +4,7 @@ const client = require("./client")
 
 // database functions
 async function getAllActivities() {
+  console.log("testing to see if there's anything here")
 
   try {
     const{
