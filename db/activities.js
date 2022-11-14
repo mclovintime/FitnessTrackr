@@ -88,7 +88,7 @@ async function attachActivitiesToRoutines(routines) {
 
 // return the new activity
 async function createActivity({ name, description }) {
-
+console.log(name, '123 4 ')
 try{
   const{
     rows: [activity],
