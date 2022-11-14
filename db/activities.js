@@ -40,6 +40,7 @@ async function getActivityById(id) {
 
 
 async function getActivityByName(name) {
+ 
   try {
     const {
       rows: [activity]
@@ -48,17 +49,13 @@ async function getActivityByName(name) {
     FROM activities
     WHERE name=$1
     `, [name]);
-
-   if (activity == undefined) {
-    return {error: "undefined activity from getactivitybyname"}
-   }
    
-    console.log(activity, "is getactivitybyname h")
     return activity;
   } catch (error) {
     console.error(error);
   }
 }
+
 
 // select and return an array of all activities
 
@@ -122,44 +119,29 @@ try {
 // don't try to update the id
 // do update the name and description
 // return the updated activity
-async function updateActivity({ id, ...fields }) {
-if (fields.name)  {
-  try {
-    const {
-        rows: [updatedActivity],
-    } = await client.query(`
-UPDATE activities 
-SET name=$1
-WHERE id=$2
-RETURNING *
-`, [fields.name, id]);
-// console.log(fields.name, updatedActivity, "THIS IS UPDATED ACTIVITY")
-if (updatedActivity == undefined) {
-  return {error: "undefined activity from updateActivity"}
-}
-return updatedActivity;
-} catch (error) {
-throw error;
-}
+async function updateActivity({ id, ...fields}) { 
+  // console.log(id, fields)
+  const setString = Object.keys(fields).map(
+    (key, index) => `"${ key }"=$${ index + 1 }`
+  ).join(', ');
+
+  if (setString.length === 0) {
+    return;
   }
 
-  if (fields.description)  {
-    try {
-      const {
-          rows: [updatedActivity],
-      } = await client.query(`
-  UPDATE activities 
-  SET description=$1
-  WHERE id=$2
-  RETURNING *
-  `, [fields.description, id]);
-  // console.log(fields.description, updatedActivity, "THIS IS UPDATED ACTIVITY")
-  
-  return updatedActivity;
-  } catch (error) {
-  throw error;
+  try {
+    const {rows: [ activity ] } = await client.query(`
+    UPDATE activities
+    SET ${setString}
+    WHERE id=${id}
+    RETURNING *;
+    `, Object.values(fields));
+
+    return activity
+  }catch (error) {
+    // console.log('UpdateActivity Check')
+    throw error
   }
-    }
 }
 
 

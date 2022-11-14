@@ -1,11 +1,12 @@
 const e = require('express');
 const express = require('express');
 const {getAllActivities, getActivityById, attachActivitiesToRoutines, createActivity, getActivityByName, updateActivity} = require("../db");
+const { requireUser, checkToken } = require('./utils');
 const activitiesRouter = express.Router();
 
 
 // GET /api/activities/:activityId/routines
-activitiesRouter.get('/:activityId/routines', async (req, res, next)=>{
+activitiesRouter.get('/:activityId/routines', checkToken, requireUser, async (req, res, next)=>{
     
     const activityId = req.params.activityId
     // console.log('activity Id', activityId)
@@ -38,7 +39,7 @@ activitiesRouter.get('/', async (req, res, next) => {
        
 
 // POST /api/activities
-activitiesRouter.post('/', async (req, res, next) => {
+activitiesRouter.post('/', checkToken, requireUser, async (req, res, next) => {
     try{
        const{name, description} = req.body
       
@@ -54,21 +55,12 @@ activitiesRouter.post('/', async (req, res, next) => {
             name: "This is all wrong"
         })
        }
-
-    else    {
-    console.log(name, description, "123")
-       const createdActivity = await createActivity({name, description})
-       const activity = await getActivityByName(name)
-    //    console.log(activity, "is activity")
-      
+   
+      }  
+        const createdActivity = await createActivity({name, description})
+       
         res.send(createdActivity)
-    }
-}   else    {
-    next({error: "no activity found by this name",
-        message: "no activity by this name fam",
-        name: "undefined error"})
-}
-    
+
     }catch (error){
         // console.log(error, "the error here")
         next({name: error.name})
@@ -76,47 +68,36 @@ activitiesRouter.post('/', async (req, res, next) => {
 })
 
 // PATCH /api/activities/:activityId
-activitiesRouter.patch('/:activityId', async (req, res, next) => {
-    const activityId = req.params.activityId
-    const {name, description} = req.body
-
-    try{
-        const testingDoesExist = await getActivityByName(name)
-        console.log(testingDoesExist, "testing does exist")
-//IF TESTINGDOESEXIST RETURNS AN ERROR, TAKE CARE OF IT
-
-            
-console.log(testingDoesExist.error, "this is the error line 93")
-        if (testingDoesExist.error !== undefined)  {
-           next(
-            {
-                error: "Doesn't exist",
-                message: "Activity 10000 not found",
-                name: 'error finding'
-            }
-           )
-
-        }
-        if (testingDoesExist.name == name)  {
-            next({
-                error: "Don't even think about it",
-                message: `An activity with name ${name} already exists`,
-                name: "Here's a string"
-            })
-        }
-       
-
-        console.log(description, name, "is description to be added plus name")
-        if (testingDoesExist.error !== undefined)    {
-        const updatedActivity = await updateActivity({id: activityId, description})
-        const updatedActivity2 = await updateActivity({id: activityId, name})
-        res.send(
-           updatedActivity2
-    )
-}
-    }catch ({name, message}){
-        next({name, message})
+activitiesRouter.patch("/:activityId", checkToken, requireUser, async (req, res, next) => {
+    const { activityId: id } = req.params;
+    const fields = req.body;
+    console.log(fields, "this is fields")
+    // const activity = await getActivityById(id)
+    try {
+      const activityWithId = await getActivityById(id);
+      if (!activityWithId) {
+        next({
+          error: "Activity Does Not Exist",
+          name: "Activity Does Not Exist",
+          message: `Activity ${id} not found`,
+        });
+      }
+      const activityWithName = await getActivityByName(fields.name);
+      if (activityWithName) {
+        console.log(activityWithName, "with name")
+        next({
+          error: "Activity Does Not Exist",
+          name: "Activity Does Not Exist",
+          message: `An activity with name ${fields.name} already exists`,
+        });
+      }
+      // console.log("hello", fields)
+      const updatedActivity = await updateActivity({ id, ...fields });
+  
+      res.send(updatedActivity);
+    } catch (error) {
+      console.error(error.detail);
     }
-})
+  });
 
 module.exports = activitiesRouter;

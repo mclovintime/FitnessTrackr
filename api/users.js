@@ -5,44 +5,11 @@ const { getPublicRoutinesByUser, getAllRoutinesByUser } = require("../db/routine
 const { createUser, getUserByUsername, } = require("../db/users.js");
 const { JWT_SECRET } = process.env;
 // const { token } = require("morgan");
-const { requireUser } = require("./utils");
+const { requireUser, auth , checkToken} = require("./utils");
 
 // POST /api/users/login
 
-usersRouter.post("/login", async (req, res, next) => {
-  const { username, password } = req.body;
-
-  // request must have both
-  if (!username || !password) {
-    next({
-      name: "MissingCredentialsError",
-      message: "Please supply both a username and password",
-    });
-  }
-
-  try {
-    const user = await getUserByUsername(username);
-
-    if (user && user.password == password) {
-      const token = jwt.sign(
-        { id: user.id, username: user.username },
-        JWT_SECRET
-      );
-      const userData = jwt.verify(token, JWT_SECRET);
-      res.send({ user, message: "you're logged in!", token });
-      return userData;
-    } else {
-      next({
-        name: "IncorrectCredentialsError",
-        message: "Username or password is incorrect",
-      });
-    }
-    return user;
-  } catch (error) {
-    console.log(error);
-    next(error);
-  }
-});
+usersRouter.post("/login", auth);
 
 // POST /api/users/register
 usersRouter.post("/register", async (req, res, next) => {
