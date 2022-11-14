@@ -84,16 +84,36 @@ activitiesRouter.patch('/:activityId', async (req, res, next) => {
         const testingDoesExist = await getActivityByName(name)
         console.log(testingDoesExist, "testing does exist")
 //IF TESTINGDOESEXIST RETURNS AN ERROR, TAKE CARE OF IT
-        if (!testingDoesExist)  {
-            console.log("we've caught an error")
+
+            
+console.log(testingDoesExist.error, "this is the error line 93")
+        if (testingDoesExist.error !== undefined)  {
+           next(
+            {
+                error: "Doesn't exist",
+                message: "Activity 10000 not found",
+                name: 'error finding'
+            }
+           )
+
         }
+        if (testingDoesExist.name == name)  {
+            next({
+                error: "Don't even think about it",
+                message: `An activity with name ${name} already exists`,
+                name: "Here's a string"
+            })
+        }
+       
 
         console.log(description, name, "is description to be added plus name")
+        if (testingDoesExist.error !== undefined)    {
         const updatedActivity = await updateActivity({id: activityId, description})
         const updatedActivity2 = await updateActivity({id: activityId, name})
         res.send(
            updatedActivity2
     )
+}
     }catch ({name, message}){
         next({name, message})
     }

@@ -134,7 +134,9 @@ WHERE id=$2
 RETURNING *
 `, [fields.name, id]);
 // console.log(fields.name, updatedActivity, "THIS IS UPDATED ACTIVITY")
-
+if (updatedActivity == undefined) {
+  return {error: "undefined activity from updateActivity"}
+}
 return updatedActivity;
 } catch (error) {
 throw error;
