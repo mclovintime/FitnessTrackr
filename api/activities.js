@@ -21,6 +21,28 @@ activitiesRouter.get('/:activityId/routines', checkToken, requireUser, async (re
     }
 })
 
+//BELOW IS WHAT JENNY SEND AS SOLUTION TO ABOVE
+// activitiesRouter.get("/:activityId/routines", async(req, res, next) => {
+//   const { activityId } = req.params;
+//   try {
+//       const activity = await getActivityById(activityId)
+//       if (!activity) {
+//           next({
+//               name: "ActivityNotFoundError",
+//               message: Activity ${activityId} not found,
+//               error: "ActivityNotFoundError"
+//           });
+//       }
+//       else {
+//           const publicRoutines = await getPublicRoutinesByActivity(activity)
+//           res.send(publicRoutines)
+//       }
+
+//   }  catch ({ name, message, error }) {
+//           next({ name, message, error });
+//           }
+// })
+
 
 // GET /api/activities
 activitiesRouter.get('/', async (req, res, next) => {
