@@ -44,14 +44,19 @@ async function getActivityByName(name) {
     const {
       rows: [activity]
     } = await client.query(`
-    SELECT name, description, id 
+    SELECT *
     FROM activities
     WHERE name=$1
     `, [name]);
+
+   if (activity == undefined) {
+    return {error: "undefined activity from getactivitybyname"}
+   }
    
+    console.log(activity, "is getactivitybyname h")
     return activity;
   } catch (error) {
-    throw error;
+    console.error(error);
   }
 }
 
@@ -88,10 +93,10 @@ async function attachActivitiesToRoutines(routines) {
 
 // return the new activity
 async function createActivity({ name, description }) {
-console.log(name, '123 4 ')
-try{
-  const{
-    rows: [activity],
+// console.log(name, description, "testing createAct")
+try {
+  const {
+    rows: [activity]
   } = await client.query(
     `
     INSERT INTO activities (name, description)
@@ -100,9 +105,14 @@ try{
     RETURNING *;
     `, [name, description]
   );
+  
+ 
+
   return activity;
+
+  // return activity;
 } catch (error) {
-  throw error;
+  console.error(error);
 }
   }
 
