@@ -30,7 +30,7 @@ const { getRoutineById } = require("../../db")
 
 describe("/api/routines", () => {
   describe("GET /api/routines", () => {
-    xit("Returns a list of public routines, includes the activities with them", async () => {
+    it("Returns a list of public routines, includes the activities with them", async () => {
       const { fakeUser } = await createFakeUserWithToken("Jan")
       const fakeRoutine = await createFakePublicRoutine(
         fakeUser.id,
@@ -65,7 +65,7 @@ describe("/api/routines", () => {
   })
 
   describe("POST /api/routines (*)", () => {
-    xit("Creates a new routine, with the creatorId matching the logged in user", async () => {
+    it("Creates a new routine, with the creatorId matching the logged in user", async () => {
       const { fakeUser, token } = await createFakeUserWithToken("Marsha")
 
       const routineData = {
@@ -85,7 +85,7 @@ describe("/api/routines", () => {
       expect(response.body.creatorId).toEqual(fakeUser.id)
     })
 
-    xit("Requires logged in user", async () => {
+    it("Requires logged in user", async () => {
       const routineData = {
         isPublic: true,
         name: "Weekly",
@@ -101,7 +101,7 @@ describe("/api/routines", () => {
   })
 
   describe("PATCH /api/routines/:routineId (**)", () => {
-    xit("Updates a routine, notably changing public/private, the name, and the goal", async () => {
+    it("Updates a routine, notably changing public/private, the name, and the goal", async () => {
       const { fakeUser, token } = await createFakeUserWithToken("Bradley")
       // Create a routine so we can update it.
       const routine = await createFakePublicRoutine(
@@ -179,7 +179,7 @@ describe("/api/routines", () => {
   })
 
   describe("DELETE /api/routines/:routineId (**)", () => {
-    xit("Hard deletes a routine. Makes sure to delete all the routineActivities whose routine is the one being deleted.", async () => {
+    it("Hard deletes a routine. Makes sure to delete all the routineActivities whose routine is the one being deleted.", async () => {
       // Create a routine so we can delete it
       const { fakeUser, token } = await createFakeUserWithToken("John")
       const fakeRoutine = await createFakePublicRoutine(

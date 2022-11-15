@@ -45,7 +45,12 @@ router.patch('/:routineId', checkToken, requireUser, async (req, res, next)=>{
 })
 
 // DELETE /api/routines/:routineId
+router.delete('/:routineId', requireUser, async (req, res, next)=>{
+    const routine_id = req.params.routineId;
+    console.log(req.params.routineId, 'test test test test')
+}
 
+)
 // POST /api/routines/:routineId/activities
 
 module.exports = router;
