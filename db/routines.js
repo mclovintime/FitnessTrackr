@@ -94,7 +94,7 @@ async function getPublicRoutinesByActivity({id}) {
     JOIN users ON routines."creatorId"=users.id
     WHERE "isPublic"=true;`)
     const routinesWithActivities= await attachActivitiesToRoutines(rows)
-    console.log(routinesWithActivities, "routines with activities test")
+   
     return routinesWithActivities;
   }catch (error){
     throw error;
@@ -106,7 +106,7 @@ async function getPublicRoutinesByActivity({id}) {
 // rely on it seem to be working fine
 
 async function createRoutine({creatorId, isPublic, name, goal}) {
-console.log(isPublic, name, goal, 'testing to see if this works')
+
 if (isPublic !== undefined && name !==undefined && goal!== undefined){
   try{
     const{
@@ -119,7 +119,7 @@ if (isPublic !== undefined && name !==undefined && goal!== undefined){
       RETURNING *;
       `, [creatorId, isPublic, name, goal]
     );
-    console.log(creatorId, "console logging routine test")
+    
     return routine;
   }catch(error){
     throw(error);
@@ -129,8 +129,7 @@ if (isPublic !== undefined && name !==undefined && goal!== undefined){
   
 
 
-async function updateRoutine({id, ...fields}) {
-
+async function updateRoutine({id, fields}) {
 
   let updatedRoutineReturn = {}
 
@@ -144,6 +143,7 @@ async function updateRoutine({id, ...fields}) {
   WHERE id=$2
   RETURNING *
   `, [fields.name, id]);
+
   // console.log(fields.name, updatedActivity, "THIS IS UPDATED ACTIVITY")
   updatedRoutineReturn = updatedRoutine
  
@@ -187,7 +187,6 @@ async function updateRoutine({id, ...fields}) {
       throw error;
       }
         }
-        
         return updatedRoutineReturn
 }
 

@@ -30,7 +30,7 @@ const { getRoutineById } = require("../../db")
 
 describe("/api/routines", () => {
   describe("GET /api/routines", () => {
-    it("Returns a list of public routines, includes the activities with them", async () => {
+    xit("Returns a list of public routines, includes the activities with them", async () => {
       const { fakeUser } = await createFakeUserWithToken("Jan")
       const fakeRoutine = await createFakePublicRoutine(
         fakeUser.id,
@@ -65,7 +65,7 @@ describe("/api/routines", () => {
   })
 
   describe("POST /api/routines (*)", () => {
-    it.only("Creates a new routine, with the creatorId matching the logged in user", async () => {
+    xit("Creates a new routine, with the creatorId matching the logged in user", async () => {
       const { fakeUser, token } = await createFakeUserWithToken("Marsha")
 
       const routineData = {
@@ -148,7 +148,7 @@ describe("/api/routines", () => {
       expectToHaveErrorMessage(response.body, UnauthorizedError())
     })
 
-    xit("returns a 403 when a user tries to edit a routine that is not theirs", async () => {
+    it("returns a 403 when a user tries to edit a routine that is not theirs", async () => {
       const { fakeUser } = await createFakeUserWithToken("Marques")
       const { fakeUser: anotherUser, token: anotherUsersToken } =
         await createFakeUserWithToken("Mandy")

@@ -1,5 +1,5 @@
 const express = require('express');
-const { getAllRoutines, createRoutine } = require('../db');
+const { getAllRoutines, createRoutine, updateRoutine } = require('../db');
 const { checkToken, requireUser } = require('./utils');
 const router = express.Router();
 
@@ -10,15 +10,16 @@ router.get('/', async(req, res)=>{
     const routines = await getAllRoutines()
     res.send(routines)
 })
+
 // POST /api/routines
 router.post('/', checkToken, requireUser, async (req, res, next)=>{
-    const userId=''
-    console.log(req.body, "testing testing")
-    console.log(req.user, 'trying to make it work')
+  
+    const userId= req.user.id
     const{isPublic, name, goal}=req.body
-    console.log(req.body.name, "working on this")
+   
     try{
-        const newRoutine= await createRoutine({userId, isPublic, name, goal})
+        const newRoutine= await createRoutine({creatorId: userId, isPublic: isPublic, name: name, goal: goal})
+        
         res.send(newRoutine)
     }catch({name, message}){
         next({name, message})
@@ -26,6 +27,22 @@ router.post('/', checkToken, requireUser, async (req, res, next)=>{
 })
 
 // PATCH /api/routines/:routineId
+router.patch('/:routineId', checkToken, requireUser, async (req, res, next)=>{
+  
+    routineId = req.params.routineId;
+    
+    const{isPublic, name, goal}=req.body
+    fields = {isPublic: req.body.isPublic, name: req.body.name, goal: req.body.goal}
+   
+    
+    try{
+        const updatedRoutineHere = await updateRoutine({id: routineId, fields: fields})
+        
+        res.send(updatedRoutineHere)
+    }catch({name, message}){
+        next({name, message})
+    }
+})
 
 // DELETE /api/routines/:routineId
 

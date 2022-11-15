@@ -22,15 +22,15 @@ async function checkToken(req, res, next){
     try{
 
     const authArray = req.headers.authorization.split(" ")
-    console.log(authArray[1], "is test array")
-    console.log(req.headers, "is headers")
+    // console.log(authArray[1], "is test array")
+    // console.log(req.headers, "is headers")
     
     const userId = jwt.verify(authArray[1], JWT_SECRET);
-    console.log(userId, "is userID")
+    // console.log(userId, "is userID")
     const user = await getUserById(userId.id)
     
     req.user = user
-    console.log(user, "is the user")
+    // console.log(user, "is the user")
     if (user == undefined)  {
         res.status(401).send({
             error: "issue with token authorization"
@@ -38,9 +38,14 @@ async function checkToken(req, res, next){
     }
     next();
 } catch{
-    console.error(
-        error.details
-    )
+    // console.error(
+    //     error.details
+    // )
+    res.send({
+      error: "Must be logged in to perform this function",
+      message: "You must be logged in to perform this action",
+      name: "You have outdone yourself, mister"
+    })
 }
 }
 
