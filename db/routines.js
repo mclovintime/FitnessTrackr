@@ -150,14 +150,18 @@ async function updateRoutine({ id, fields, usersId, usersName, trueRoutine }) {
       // console.log(testingthis.creatorId, "creatorid from query")
 
       if (testingthis.creatorId !== usersId) {
-        return {
+        res.status(403)
+        res.send({
+          
           error: "ERROR",
           message: `User ${usersName} is not allowed to update ${testingthis.name}`,
-          name: "Update request denied!",
-        };
+          name: "Update request denied!"
+        })
+        return 
       }
     } catch (error) {
-      throw error;
+      
+      throw res.status(403);
     }
   }
 
@@ -224,7 +228,47 @@ async function updateRoutine({ id, fields, usersId, usersName, trueRoutine }) {
   return updatedRoutineReturn;
 }
 
-async function destroyRoutine(id) {
+
+
+async function destroyRoutine(id, reqUser, reqUsername) {
+  let goodToGo = true
+  let toBeReturned = {}
+  console.log(id, "testing id of routine")
+  console.log(reqUser, "testing reqUser")
+// getting the destroyed routine to be returned
+  try {
+    const {
+      rows: [testingthis],
+    } = await client.query(
+      `
+    SELECT *
+  FROM routines
+  WHERE id = $1
+    `,
+      [id]
+    );
+    console.log(testingthis.creatorId, " is creator id from query")
+    console.log(reqUser, "testing reqUser")
+
+    if (testingthis.creatorId !== reqUser) {
+      console.log("error caught in db!")
+      goodToGo = false
+      return {
+        error: "ERROR",
+        message: `User ${reqUsername} is not allowed to delete ${testingthis.name}`,
+        name: "Denied delete request"
+      };
+    } 
+
+    // console.log(testingthis, "output from query")
+ toBeReturned = testingthis
+ 
+
+  } catch (error) {
+    throw error;
+  }
+ 
+if (goodToGo) {
   try {
     const {
       rows: [bingbong],
@@ -246,9 +290,12 @@ async function destroyRoutine(id) {
         ;
         `
     );
+    
+    return(toBeReturned)
   } catch (error) {
     throw error;
   }
+}
 }
 
 module.exports = {

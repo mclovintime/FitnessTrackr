@@ -1,5 +1,5 @@
 const express = require("express");
-const { getAllRoutines, createRoutine, updateRoutine } = require("../db");
+const { getAllRoutines, createRoutine, updateRoutine, destroyRoutine } = require("../db");
 const { checkToken, requireUser } = require("./utils");
 const router = express.Router();
 
@@ -53,7 +53,7 @@ router.patch("/:routineId", checkToken, requireUser, async (req, res, next) => {
 
     
     if (updatedRoutineHere.error) {
-    //   console.log("we've caught an error");
+      console.log("we've caught an error");
       res.status(403);
       const errorResponse = {
         error: "ERROR",
@@ -68,9 +68,23 @@ router.patch("/:routineId", checkToken, requireUser, async (req, res, next) => {
 });
 
 // DELETE /api/routines/:routineId
-router.delete('/:routineId', requireUser, async (req, res, next)=>{
+router.delete('/:routineId', checkToken, requireUser, async (req, res, next)=>{
     const routine_id = req.params.routineId;
-    console.log(req.params.routineId, 'test test test test')
+    console.log(req.body, 'test test test test')
+    console.log(req.user, "testing reqUser")
+
+    try{
+            const destroyedRoutine = await destroyRoutine(req.params.routineId, req.user.id, req.user.username)
+            console.log(destroyedRoutine, "is destroyed routine")
+            if (destroyedRoutine.error) {
+                res.status(403);
+            }
+
+
+        res.send(destroyedRoutine)
+    } catch ({name, message})   {
+         next({name, message})
+    }
 }
 
 )

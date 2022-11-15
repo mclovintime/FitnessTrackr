@@ -62,7 +62,7 @@ usersRouter.post("/register", async (req, res, next) => {
 
 // GET /api/users/me
 
-usersRouter.get("/me", requireUser, async (req, res, next) => {
+usersRouter.get("/me", checkToken, requireUser, async (req, res, next) => {
   try {
     if (req.user) {
       res.send(req.user);

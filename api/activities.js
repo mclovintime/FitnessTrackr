@@ -1,4 +1,4 @@
-const e = require('express');
+
 const express = require('express');
 const {getAllActivities, getActivityById, createActivity, getActivityByName, updateActivity, getPublicRoutinesByActivity} = require("../db");
 const { requireUser, checkToken } = require('./utils');
