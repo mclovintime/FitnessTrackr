@@ -6,6 +6,7 @@ const { JWT_SECRET } = process.env;
 
 function requireUser(req,res,next)  {
 if (!req.user){
+    console.log('there is no user')
     res.status(401);
     next({
         name: "MissingUserError",

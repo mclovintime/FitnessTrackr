@@ -119,7 +119,7 @@ if (isPublic !== undefined && name !==undefined && goal!== undefined){
       RETURNING *;
       `, [creatorId, isPublic, name, goal]
     );
-    console.log(routine, "console logging routine test")
+    console.log(creatorId, "console logging routine test")
     return routine;
   }catch(error){
     throw(error);
