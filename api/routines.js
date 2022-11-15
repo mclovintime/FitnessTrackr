@@ -10,20 +10,15 @@ router.get('/', async(req, res)=>{
     res.send(routines)
 })
 // POST /api/routines
-router.post('./:routines', async (req, res, next)=>{
+router.post('/', async (req, res, next)=>{
+    const userId=''
+    console.log(req.body, "testing testing")
+    const{isPublic, name, goal}=req.body
+    console.log(req.body.name, "working on this")
     try{
-        const{name} = req.body
-        const newActivity = await createRoutine(name)
-        if (newActivity){
-            if(newActivity.name == name){
-                next({
-                    error: "error",
-                    message: `A routine with name ${name} already exists`
-                })
-            }
-        }
-    }catch (error){
-        console.error(error)
+        const newRoutine= await createRoutine({userId, isPublic, name, goal})
+    }catch({name, message}){
+        next({name, message})
     }
 })
 

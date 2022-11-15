@@ -106,7 +106,8 @@ async function getPublicRoutinesByActivity({id}) {
 // rely on it seem to be working fine
 
 async function createRoutine({creatorId, isPublic, name, goal}) {
-
+console.log(isPublic, name, goal, 'testing to see if this works')
+if (isPublic !== undefined && name !==undefined && goal!== undefined){
   try{
     const{
       rows: [routine],
@@ -118,11 +119,12 @@ async function createRoutine({creatorId, isPublic, name, goal}) {
       RETURNING *;
       `, [creatorId, isPublic, name, goal]
     );
-    
+    console.log(routine, "console logging routine test")
     return routine;
   }catch(error){
     throw(error);
   }
+}
 }
   
 
